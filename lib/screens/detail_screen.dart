@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:async_wallpaper/async_wallpaper.dart';
+import '../providers/wallpaper_provider.dart';
+import 'package:wallpaper_manager_plus/wallpaper_manager_plus.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
+import 'package:vibration/vibration.dart';
 import 'dart:typed_data';
 import '../models/wallpaper_model.dart';
 
@@ -64,40 +68,41 @@ class _DetailScreenState extends State<DetailScreen> {
     }
   }
 
+  // ... inside _DetailScreenState ...
+
   Future<void> _setWallpaper(int location) async {
     setState(() {
       _isSettingWallpaper = true;
     });
     try {
+      var file = await DefaultCacheManager().getSingleFile(
+        widget.wallpaper.src.original,
+      );
+
       // 1: Home, 2: Lock, 3: Both
       String result;
       if (location == 1) {
-        result =
-            await AsyncWallpaper.setWallpaper(
-              url: widget.wallpaper.src.original,
-              wallpaperLocation: AsyncWallpaper.HOME_SCREEN,
-              goToHome: false,
-            )
-            ? 'Wallpaper Set'
-            : 'Failed';
+        await WallpaperManagerPlus().setWallpaper(
+          file,
+          WallpaperManagerPlus.homeScreen,
+        );
+        result = 'Wallpaper Set on Home Screen';
       } else if (location == 2) {
-        result =
-            await AsyncWallpaper.setWallpaper(
-              url: widget.wallpaper.src.original,
-              wallpaperLocation: AsyncWallpaper.LOCK_SCREEN,
-              goToHome: false,
-            )
-            ? 'Wallpaper Set'
-            : 'Failed';
+        await WallpaperManagerPlus().setWallpaper(
+          file,
+          WallpaperManagerPlus.lockScreen,
+        );
+        result = 'Wallpaper Set on Lock Screen';
       } else {
-        result =
-            await AsyncWallpaper.setWallpaper(
-              url: widget.wallpaper.src.original,
-              wallpaperLocation: AsyncWallpaper.BOTH_SCREENS,
-              goToHome: false,
-            )
-            ? 'Wallpaper Set'
-            : 'Failed';
+        await WallpaperManagerPlus().setWallpaper(
+          file,
+          WallpaperManagerPlus.bothScreens,
+        );
+        result = 'Wallpaper Set on Both Screens';
+      }
+
+      if (await Vibration.hasVibrator() ?? false) {
+        Vibration.vibrate(duration: 50);
       }
 
       if (mounted) {
@@ -214,13 +219,21 @@ class _DetailScreenState extends State<DetailScreen> {
                         ),
                   icon: const Icon(Icons.wallpaper, color: Colors.white),
                 ),
-                FloatingActionButton(
-                  heroTag: 'favorite',
-                  onPressed: () {
-                    // TODO: Implement Favorite
+                Consumer<WallpaperProvider>(
+                  builder: (context, provider, child) {
+                    final isFav = provider.isFavorite(widget.wallpaper.id);
+                    return FloatingActionButton(
+                      heroTag: 'favorite',
+                      onPressed: () {
+                        provider.toggleFavorite(widget.wallpaper);
+                      },
+                      backgroundColor: Colors.white,
+                      child: Icon(
+                        isFav ? Icons.favorite : Icons.favorite_border,
+                        color: isFav ? Colors.red : Colors.black,
+                      ),
+                    );
                   },
-                  backgroundColor: Colors.white,
-                  child: const Icon(Icons.favorite_border, color: Colors.black),
                 ),
               ],
             ),
