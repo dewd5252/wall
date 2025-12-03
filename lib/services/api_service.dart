@@ -4,7 +4,8 @@ import '../models/wallpaper_model.dart';
 
 class ApiService {
   // TODO: Replace with your actual Pexels API Key
-  static const String _apiKey = 'YOUR_PEXELS_API_KEY_HERE';
+  static const String _apiKey =
+      'tNaACBCxqyW2ajNLIIkVDOfUucjxxsX2VF93fq8wDPKMs21JP0xTGCjg';
   static const String _baseUrl = 'https://api.pexels.com/v1';
 
   Future<List<WallpaperModel>> getCuratedWallpapers({
