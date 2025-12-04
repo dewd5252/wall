@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../providers/wallpaper_provider.dart';
-import 'package:wallpaper_manager_plus/wallpaper_manager_plus.dart';
+import 'package:wallpaper_manager_flutter/wallpaper_manager_flutter.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -80,28 +80,29 @@ class _DetailScreenState extends State<DetailScreen> {
       );
 
       // 1: Home, 2: Lock, 3: Both
+      final wallpaperManager = WallpaperManagerFlutter();
       String result;
       if (location == 1) {
-        await WallpaperManagerPlus().setWallpaper(
+        await wallpaperManager.setWallpaper(
           file,
-          WallpaperManagerPlus.homeScreen,
+          WallpaperManagerFlutter.homeScreen,
         );
         result = 'Wallpaper Set on Home Screen';
       } else if (location == 2) {
-        await WallpaperManagerPlus().setWallpaper(
+        await wallpaperManager.setWallpaper(
           file,
-          WallpaperManagerPlus.lockScreen,
+          WallpaperManagerFlutter.lockScreen,
         );
         result = 'Wallpaper Set on Lock Screen';
       } else {
-        await WallpaperManagerPlus().setWallpaper(
+        await wallpaperManager.setWallpaper(
           file,
-          WallpaperManagerPlus.bothScreens,
+          WallpaperManagerFlutter.bothScreens,
         );
         result = 'Wallpaper Set on Both Screens';
       }
 
-      if (await Vibration.hasVibrator() ?? false) {
+      if (await Vibration.hasVibrator()) {
         Vibration.vibrate(duration: 50);
       }
 

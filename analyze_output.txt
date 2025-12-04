@@ -1,0 +1,5 @@
+[info] 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss (D:\test\flutter_application_1\lib\screens\collections_screen.dart:77:34)
+[warning] Dead code (D:\test\flutter_application_1\lib\screens\detail_screen.dart:104:41)
+[warning] The left operand can't be null, so the right operand is never executed (D:\test\flutter_application_1\lib\screens\detail_screen.dart:104:44)
+[info] Don't use 'BuildContext's across async gaps (D:\test\flutter_application_1\lib\screens\home_screen.dart:21:9)
+[warning] Unused import: 'home_screen.dart' (D:\test\flutter_application_1\lib\screens\onboarding_screen.dart:4:8)

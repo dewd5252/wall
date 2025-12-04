@@ -16,12 +16,12 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     // Fetch wallpapers on init
-    Future.microtask(
-      () => Provider.of<WallpaperProvider>(
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<WallpaperProvider>(
         context,
         listen: false,
-      ).fetchCuratedWallpapers(),
-    );
+      ).fetchCuratedWallpapers();
+    });
   }
 
   @override
